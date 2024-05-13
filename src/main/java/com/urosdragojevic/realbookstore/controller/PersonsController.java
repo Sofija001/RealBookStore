@@ -12,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpSession;
+import java.nio.file.AccessDeniedException;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -52,7 +54,12 @@ public class PersonsController {
     }
 
     @PostMapping("/update-person")
-    public String updatePerson(Person person) {
+    //public String updatePerson(Person person) {
+    public String updatePerson(Person person, HttpSession session, @RequestParam("csrfToken") String csrfToken) throws AccessDeniedException {
+        String csrf = session.getAttribute("CSRF_TOKEN").toString();
+        if (!csrf.equalsIgnoreCase(csrfToken)) {
+            throw new AccessDeniedException("Access Denied");
+        }
         personRepository.update(person);
         return "redirect:/persons/" + person.getId();
     }
