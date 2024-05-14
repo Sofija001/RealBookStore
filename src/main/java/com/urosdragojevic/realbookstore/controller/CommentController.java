@@ -2,6 +2,7 @@ package com.urosdragojevic.realbookstore.controller;
 
 import com.urosdragojevic.realbookstore.domain.Comment;
 import com.urosdragojevic.realbookstore.domain.User;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.urosdragojevic.realbookstore.repository.CommentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ public class CommentController {
     }
 
     @PostMapping(value = "/comments")
+    @PreAuthorize("hasAuthority('ADD_COMMENT')")
     public String createComment(@ModelAttribute Comment comment, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         comment.setUserId(user.getId());
